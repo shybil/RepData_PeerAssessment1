@@ -1,12 +1,8 @@
----
-output:
-  html_document:
-    keep_md: yes
----
 Peer Assessment Project 1
 ===========================
 ##### Read Data
-```{r}
+
+```r
 data <- read.csv(unzip("activity.zip","activity.csv"))
 # Tidy the date up
 #
@@ -16,7 +12,8 @@ data$date<-as.Date(data$date, format = '%Y-%m-%d')
 withOutNAData <- na.omit(data)
 ```
 #### Q1. What is mean total number of steps taken per day?
-```{r Q1}
+
+```r
 stepsPerDay <- tapply(data$steps, data$date, FUN=sum, na.rm=TRUE)
 colors = c("red", "yellow", "green", "violet", "orange") 
 hist(stepsPerDay, main = "Histogram Total Number of Steps Taken Each Day", 
@@ -28,38 +25,62 @@ abline(v=mean(stepsPerDay), lty=2, col="blue")
 abline(v=median(stepsPerDay), lty=2, col="brown4")
 text(mean(stepsPerDay),26,labels="Mean", pos=1, col="blue")
 text(median(stepsPerDay),22,labels="Median", pos=1, col="brown4")
-
-
-Q1dmean <- mean(stepsPerDay, na.rm=TRUE)
-Q1dmedian <- median(stepsPerDay, na.rm=TRUE)
-
 ```
 
-##### The mean is  `r format(Q1dmean, digits=8)` and the median is  `r Q1dmedian`.
+![](./PA1_template_files/figure-html/Q1-1.png) 
+
+```r
+Q1dmean <- mean(stepsPerDay, na.rm=TRUE)
+Q1dmedian <- median(stepsPerDay, na.rm=TRUE)
+```
+
+##### The mean is  9354.2295 and the median is  10395.
 
 #### Q2. What is the average daily activity pattern?
-```{r Q2}
+
+```r
 library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.1.2
+```
+
+```r
 averages <- aggregate(x=list(steps=withOutNAData$steps), by=list(interval = as.numeric(as.character(withOutNAData$interval))),  FUN=mean)
 plot(averages, type="l", main="Time Series",col="blue",col.axis="red",col.lab="darkslateblue",
     xlab("5-minute interval"),
     ylab("Avg # of steps taken")         
 )
+```
+
+![](./PA1_template_files/figure-html/Q2-1.png) 
+
+```r
 maxInterval<-averages[averages$steps == max(averages$steps), ]
 ```
-##### The 5-minute interval  `r maxInterval$interval` has the max # of steps of `r format(round(maxInterval$steps), digits = 7)` 
+##### The 5-minute interval  835 has the max # of steps of 206 
 
 #### Q3. Imputing missing values
 Calculate and report the total number of missing values in the dataset
-```{r Q3}
+
+```r
 misSteps <- sum(is.na(data$steps))
 ```
-##### The number of missing values is `r misSteps`.
+##### The number of missing values is 2304.
 
 I'm replacing each missing value with the mean value of its 5-minute interval.
 
-```{r Q3-1}
+
+```r
 library(plyr)
+```
+
+```
+## Warning: package 'plyr' was built under R version 3.1.2
+```
+
+```r
 #
 # Create a new data set with imputed data
 #
@@ -76,8 +97,11 @@ abline(v=mean(imputeStepsPerDay), lty=2, col="blue")
 abline(v=median(imputeStepsPerDay), lty=2, col="brown4")
 text(mean(imputeStepsPerDay),26,labels="Mean", pos=1, col="blue")
 text(median(imputeStepsPerDay),22,labels="Median", pos=1, col="brown4")
+```
 
+![](./PA1_template_files/figure-html/Q3-1-1.png) 
 
+```r
 imputedMean <- mean(imputeStepsPerDay, na.rm=TRUE)
 imputedMedian <- median(imputeStepsPerDay, na.rm=TRUE)
 
@@ -86,19 +110,20 @@ medianDiff <- imputedMedian - Q1dmedian
 stepDiff <- sum(newData$steps) - sum(withOutNAData$steps)
 ```
 
-Non-imputed Mean  : ``r format(Q1dmean,digits = 8)``
-Non-imputed Median: ``r format(Q1dmedian,digits = 8)``
-Imputed Mean  : ``r format(imputedMean,digits = 8)``
-Imputed Median: ``r format(imputedMedian,digits = 8)``
+Non-imputed Mean  : `9354.2295`
+Non-imputed Median: `10395`
+Imputed Mean  : `10766.189`
+Imputed Median: `10766.189`
 
-The difference between the non-imputed mean and imputed mean is ``r meanDiff``
-The difference between the non-imputed mean and imputed mean is ``r medianDiff``
-The impact of imputing missing data on the total daily number of steps is a difference of ``r format(stepDiff,digits=8)``
+The difference between the non-imputed mean and imputed mean is `1411.959171`
+The difference between the non-imputed mean and imputed mean is `371.1886792`
+The impact of imputing missing data on the total daily number of steps is a difference of `86129.509`
 
 ##### With the imputed values, the mean and median are the same
 
 #### Q4. Are there differences in activity patterns between weekdays and weekends?
-```{r Q4}
+
+```r
 library(ggplot2)
 # Create a factor variable with two levels - weekday or weekend
 dayType <- function(date) {
@@ -116,5 +141,7 @@ averages <- aggregate(steps ~ interval + day, data=newData, mean)
 ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(day ~ .) +
     xlab("5-minute interval") + ylab("Number of steps")
 ```
+
+![](./PA1_template_files/figure-html/Q4-1.png) 
 
 ##### There are fewer steps per day in the weekday than the weekend on average
