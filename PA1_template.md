@@ -1,3 +1,9 @@
+---
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+---
 Peer Assessment Project 1
 ===========================
 ##### Read Data
@@ -27,7 +33,7 @@ text(mean(stepsPerDay),26,labels="Mean", pos=1, col="blue")
 text(median(stepsPerDay),22,labels="Median", pos=1, col="brown4")
 ```
 
-![](./PA1_template_files/figure-html/Q1-1.png) 
+![plot of chunk Q1](figure/Q1-1.png) 
 
 ```r
 Q1dmean <- mean(stepsPerDay, na.rm=TRUE)
@@ -40,13 +46,6 @@ Q1dmedian <- median(stepsPerDay, na.rm=TRUE)
 
 ```r
 library(ggplot2)
-```
-
-```
-## Warning: package 'ggplot2' was built under R version 3.1.2
-```
-
-```r
 averages <- aggregate(x=list(steps=withOutNAData$steps), by=list(interval = as.numeric(as.character(withOutNAData$interval))),  FUN=mean)
 plot(averages, type="l", main="Time Series",col="blue",col.axis="red",col.lab="darkslateblue",
     xlab("5-minute interval"),
@@ -54,7 +53,7 @@ plot(averages, type="l", main="Time Series",col="blue",col.axis="red",col.lab="d
 )
 ```
 
-![](./PA1_template_files/figure-html/Q2-1.png) 
+![plot of chunk Q2](figure/Q2-1.png) 
 
 ```r
 maxInterval<-averages[averages$steps == max(averages$steps), ]
@@ -74,13 +73,6 @@ I'm replacing each missing value with the mean value of its 5-minute interval.
 
 ```r
 library(plyr)
-```
-
-```
-## Warning: package 'plyr' was built under R version 3.1.2
-```
-
-```r
 #
 # Create a new data set with imputed data
 #
@@ -99,7 +91,7 @@ text(mean(imputeStepsPerDay),26,labels="Mean", pos=1, col="blue")
 text(median(imputeStepsPerDay),22,labels="Median", pos=1, col="brown4")
 ```
 
-![](./PA1_template_files/figure-html/Q3-1-1.png) 
+![plot of chunk Q3-1](figure/Q3-1-1.png) 
 
 ```r
 imputedMean <- mean(imputeStepsPerDay, na.rm=TRUE)
@@ -142,6 +134,6 @@ ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(day ~ .) +
     xlab("5-minute interval") + ylab("Number of steps")
 ```
 
-![](./PA1_template_files/figure-html/Q4-1.png) 
+![plot of chunk Q4](figure/Q4-1.png) 
 
 ##### There are fewer steps per day in the weekday than the weekend on average
